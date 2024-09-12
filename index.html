@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World API</title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+
+    <h1>Hello World API</h1>
+    <p>Select a language to get the "Hello World" message:</p>
+
+    <select id="language-select">
+        <option value="">-- Select a Language --</option>
+        <option value="English">English</option>
+        <option value="French">French</option>
+        <option value="Hindi">Hindi</option>
+    </select>
+    <button onclick="fetchMessage()">Get Message</button>
+
+    <div id="result"></div>
+
+    <script>
+        function fetchMessage() {
+            const language = document.getElementById('language-select').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!language) {
+                resultDiv.innerHTML = '<p style="color: red;">Please select a language.</p>';
+                return;
+            }
+
+            fetch(`http://localhost:5000/hello/?language=${language}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error_message) {
+                        resultDiv.innerHTML = `<p style="color: red;">${data.error_message}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `<p><strong>ID:</strong> ${data.ID}</p><p><strong>Message:</strong> ${data.msgText}</p>`;
+                    }
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = `<p style="color: red;">An error occurred: ${error.message}</p>`;
+                });
+        }
+    </script>
+
+</body>
+</html>
